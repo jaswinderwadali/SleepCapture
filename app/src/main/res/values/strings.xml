@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SleepCapture</string>
+    <string name="title_activity_horizontal_bar_chart">HorizontalBarChartActivity</string>
+</resources>
