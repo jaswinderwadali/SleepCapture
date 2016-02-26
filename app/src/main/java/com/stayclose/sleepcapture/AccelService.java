@@ -129,7 +129,7 @@ public class AccelService extends Service implements SensorEventListener {
         synchronized (this) {
             //monitor only for accelerometer changes
             int type = sensorEvent.sensor.getType();
-            if (type == accel.TYPE_ACCELEROMETER) {
+            if (type == android.hardware.Sensor.TYPE_ACCELEROMETER) {
 
                 //get times of when sensor is being changed
                 Calendar cal = Calendar.getInstance();
@@ -160,7 +160,7 @@ public class AccelService extends Service implements SensorEventListener {
                     stopService();
                 }
             }
-            if (type == accel.TYPE_LIGHT) {
+            if (type == android.hardware.Sensor.TYPE_LIGHT) {
                 sleepData.setLight(sensorEvent.values[0]);
                 Log.d("Light_event", "Fire");
             }

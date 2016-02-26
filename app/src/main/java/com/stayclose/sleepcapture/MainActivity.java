@@ -51,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
             Boolean sleeping = null;
             long start = 0;
 
+            ArrayList<Float> accelerometerReadings = new ArrayList<>();
+            ArrayList<Float> lightReadings = new ArrayList<>();
+            ArrayList<Boolean> screenStates = new ArrayList<>();
+
             for (SleepData currData : sleepDatas) {
 
                 if (sleeping == null) {
@@ -60,17 +64,33 @@ public class MainActivity extends AppCompatActivity {
                     if (start == 0) {
                         start = currData.getTime();
                     }
+                    accelerometerReadings.add(currData.getAccelerator());
+                    lightReadings.add(currData.getLight());
+                    screenStates.add(currData.getScreenState());
                 } else {
 
                     SleepState temp = new SleepState();
                     temp.setEndTime(currData.getTime());
                     temp.setIsSleeping(sleeping);
                     temp.setStartTime(start);
+                    temp.setLightReadings(lightReadings);
+                    temp.setAccelerometerReadings(accelerometerReadings);
+                    temp.setScreenStates(screenStates);
                     finaldata.add(temp);
 
                     start = currData.getTime();
-
                     sleeping = currData.getCase();
+
+                    //start new ArrayLists
+                    accelerometerReadings = new ArrayList<>();
+                    lightReadings = new ArrayList<>();
+                    screenStates = new ArrayList<>();
+
+                    //Add first value to new ArrayLists
+                    accelerometerReadings.add(currData.getAccelerator());
+                    lightReadings.add(currData.getLight());
+                    screenStates.add(currData.getScreenState());
+
                 }
             }
             int size = sleepDatas.size();
@@ -80,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
                 temp.setIsSleeping(sleeping);
                 temp.setStartTime(start);
                 temp.setEndTime(sleepDatas.get(size > 1 ? (size - 1) : size).getTime());
+                temp.setScreenStates(screenStates);
+                temp.setAccelerometerReadings(accelerometerReadings);
+                temp.setLightReadings(lightReadings);
                 finaldata.add(temp);
 
             }
@@ -96,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         if (sleepDatas.get(position).getAccelerator() >= 1.1 || sleepDatas.get(position).getAccelerator() <= 0.9) {
             move = true;
         }
-        if (!sleepDatas.get(position).isScreenState() && !move && (sleepDatas.get(position).getLight() < 15.0f)) {
+        if (!sleepDatas.get(position).getScreenState() && !move && (sleepDatas.get(position).getLight() < 15.0f)) {
             return true;
         } else {
             return false;

@@ -18,7 +18,7 @@ public class SleepData {
         this.time = time;
     }
 
-    public boolean isScreenState() {
+    public boolean getScreenState() {
         return screenState;
     }
 
@@ -56,7 +56,7 @@ public class SleepData {
         if (getAccelerator() >= 1.1 ||getAccelerator() <= 0.9) {
             move = true;
         }
-        if (!isScreenState() && !move && getLight() < 15.0f) {
+        if (!getScreenState() && !move && getLight() < 15.0f) {
             return true;
         } else {
             return false;
