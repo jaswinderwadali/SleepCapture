@@ -102,9 +102,9 @@ public class Adapter extends BaseAdapter {
         LineDataSet yVals = new LineDataSet(accel, "Accel");
         yVals.setDrawCircleHole(false);
         yVals.setCircleColor(Color.parseColor("#00bed6"));
-        yVals.setCircleSize(2);
+        yVals.setCircleSize(1.5f);
         yVals.setDrawValues(false);
-        yVals.setLineWidth(1f);
+        yVals.setLineWidth(1.5f);
         yVals.setColor(Color.parseColor("#00bed6"));
 
         accelChart.setData(new LineData(x, yVals));
@@ -149,9 +149,9 @@ public class Adapter extends BaseAdapter {
         LineDataSet yVals1 = new LineDataSet(light, "Light");
         yVals1.setDrawCircleHole(false);
         yVals1.setCircleColor(Color.parseColor("#00bed6"));
-        yVals1.setCircleSize(2);
+        yVals1.setCircleSize(1.5f);
         yVals1.setDrawValues(false);
-        yVals1.setLineWidth(1f);
+        yVals1.setLineWidth(1.5f);
         yVals1.setColor(Color.parseColor("#00bed6"));
 
         lightChart.setData(new LineData(x1, yVals1));

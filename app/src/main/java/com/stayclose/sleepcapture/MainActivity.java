@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
                 temp.setIsSleeping(sleeping);
                 temp.setStartTime(start);
-                temp.setEndTime(sleepDatas.get(size > 1 ? (size - 1) : size).getTime());
+                temp.setEndTime(sleepDatas.get(size > 0 ? (size - 1) : size).getTime());
                 temp.setScreenStates(screenStates);
                 temp.setAccelerometerReadings(accelerometerReadings);
                 temp.setLightReadings(lightReadings);

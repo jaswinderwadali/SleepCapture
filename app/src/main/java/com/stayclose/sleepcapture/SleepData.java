@@ -53,7 +53,7 @@ public class SleepData {
 
     Boolean getCase() {
         boolean move = false;
-        if (getAccelerator() >= 1.1 ||getAccelerator() <= 0.9) {
+        if (getAccelerator() >= 1.1 || getAccelerator() <= 0.8) {
             move = true;
         }
         if (!getScreenState() && !move && getLight() < 15.0f) {
