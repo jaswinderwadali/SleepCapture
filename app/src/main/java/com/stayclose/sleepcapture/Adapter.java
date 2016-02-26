@@ -1,7 +1,6 @@
 package com.stayclose.sleepcapture;
 
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,11 +59,11 @@ public class Adapter extends BaseAdapter {
         SleepState current = sleepDatas.get(position);
         if (!current.isSleeping()) {
             five.setText("Awake :" + current.getInterval());
-            view.setBackgroundColor(Color.parseColor("#ffd000"));
+            view.setBackgroundColor(Color.parseColor("#FFFFF176"));
             five.setTextColor(Color.DKGRAY);
         } else {
             five.setText("Sleeping :" + current.getInterval());
-            view.setBackgroundColor(Color.DKGRAY);
+            view.setBackgroundColor(Color.parseColor("#1c3a49"));
             five.setTextColor(Color.WHITE);
         }
 
@@ -73,7 +72,6 @@ public class Adapter extends BaseAdapter {
         accelChart.invalidate();
         ArrayList<Entry> accel = new ArrayList<>();
         ArrayList<Float> readings = current.getAccelerometerReadings();
-        Log.d("Accelerometer count:", "Pos: " + position + " count: " + readings.size());
         List<String> x = new ArrayList<>();
         for (int i = 0; i < readings.size(); i++) {
             accel.add(new Entry(readings.get(i), i));
@@ -87,6 +85,14 @@ public class Adapter extends BaseAdapter {
         accelChart.setAutoScaleMinMaxEnabled(false);
         accelChart.setScaleYEnabled(false);
         accelChart.setDescription("");
+
+        Legend leg1 = accelChart.getLegend();
+        leg1.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        leg1.setXEntrySpace(15);
+        leg1.setTextSize(11);
+        leg1.setFormSize(11);
+        leg1.setYOffset(2f);
+        leg1.setTextColor(Color.parseColor("#00bed6"));
 
         //setting up axes
         XAxis xAxis = accelChart.getXAxis();
@@ -116,7 +122,7 @@ public class Adapter extends BaseAdapter {
         accelChart.setData(new LineData(x, yVals));
 
 
-        //accel chart setup
+        //light chart setup
         lightChart.invalidate();
         ArrayList<Entry> light = new ArrayList<>();
         ArrayList<Float> lightreadings = current.getLightReadings();
@@ -133,6 +139,14 @@ public class Adapter extends BaseAdapter {
         lightChart.setAutoScaleMinMaxEnabled(false);
         lightChart.setScaleYEnabled(false);
         lightChart.setDescription("");
+
+        Legend leg2 = lightChart.getLegend();
+        leg2.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        leg2.setXEntrySpace(15);
+        leg2.setTextSize(11);
+        leg2.setFormSize(11);
+        leg2.setYOffset(2f);
+        leg2.setTextColor(Color.parseColor("#00bed6"));
 
         //setting up axes
         XAxis xAxis1 = lightChart.getXAxis();
@@ -161,7 +175,7 @@ public class Adapter extends BaseAdapter {
 
         lightChart.setData(new LineData(x1, yVals1));
 
-        //screen chart
+        //screen chart setup
         screenChart.invalidate();
         ArrayList<BarEntry> screen = new ArrayList<>();
         ArrayList<Boolean> screenStates = current.getScreenStates();
@@ -218,13 +232,15 @@ public class Adapter extends BaseAdapter {
         colorval.add(0, "Screen on");
         colorval.add(1, "Screen off");
 
-        Legend leg2 = screenChart.getLegend();
-        leg2.setXEntrySpace(15);
-        leg2.setCustom(colorint, colorval);
-        leg2.setTextSize(11);
-        leg2.setFormSize(9);
-        leg2.setYOffset(2f);
-        leg2.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        Legend leg3 = screenChart.getLegend();
+        leg3.setXEntrySpace(15);
+        leg3.setCustom(colorint, colorval);
+        leg3.setTextSize(11);
+        leg3.setFormSize(11);
+        leg3.setYOffset(2f);
+        leg3.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        leg3.setTextColor(Color.parseColor("#00bed6"));
+
 
         screenChart.setData(new BarData(x2, yVals2));
 

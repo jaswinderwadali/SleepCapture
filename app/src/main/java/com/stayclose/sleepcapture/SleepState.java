@@ -47,7 +47,15 @@ public class SleepState {
 
         interval = interval + " - " + sdf.format(date);
 
-        return interval + "\nTotal time : " + getDuration() + " min";
+        int duration = (int) getDuration();
+        if (duration >= 60) {
+            interval = interval + "\nTotal time : " + (int) duration / 60 + "hr " + duration % 60 + "min";
+
+        } else {
+            interval = interval + "\nTotal time : " + duration + "min";
+        }
+
+        return interval;
     }
 
     public float getDuration() {

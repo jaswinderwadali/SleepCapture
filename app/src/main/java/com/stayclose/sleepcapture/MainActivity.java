@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                         cumilativeData.get(lastPos).addLightData(finaldata.get(i).getLightReadings());
                         cumilativeData.get(lastPos).addScreenData(finaldata.get(i).getScreenStates());
                     } else {
-                        if (finaldata.get(i).getDuration() > 4) {
+                        if (finaldata.get(i).getDuration() > 5) {
                             cumilativeData.add(finaldata.get(i));
                         } else {
                             interrupts.add(finaldata.get(i));
@@ -144,22 +144,8 @@ public class MainActivity extends AppCompatActivity {
             Gson gson1 = new Gson();
             Log.d("interrupts", "" + gson1.toJson(interrupts).toString());
             listView.setAdapter(adapter);
-
         }
 
-    }
-
-
-    Boolean getCase(int position, List<SleepData> sleepDatas) {
-        boolean move = false;
-        if (sleepDatas.get(position).getAccelerator() >= 1.1 || sleepDatas.get(position).getAccelerator() <= 0.9) {
-            move = true;
-        }
-        if (!sleepDatas.get(position).getScreenState() && !move && (sleepDatas.get(position).getLight() < 15.0f)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public void startMonitoringAccelerometer() {
