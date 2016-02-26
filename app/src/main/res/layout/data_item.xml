@@ -12,6 +12,11 @@
         android:padding="12dp"
         android:textSize="14sp" />
 
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/screen_graph"
+        android:layout_width="match_parent"
+        android:layout_height="75dp" />
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/accel_graph"
         android:layout_width="match_parent"

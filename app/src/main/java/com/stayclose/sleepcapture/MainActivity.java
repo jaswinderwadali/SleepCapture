@@ -7,14 +7,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -106,7 +109,40 @@ public class MainActivity extends AppCompatActivity {
                 finaldata.add(temp);
 
             }
-            Adapter adapter = new Adapter(finaldata);
+
+
+//            Iterator<SleepState> it = finaldata.iterator();
+//            while (it.hasNext()) {
+//                if (it.next().getDuration() <= 4f) {
+//                    it.remove();
+//                }
+//            }
+            ArrayList<SleepState> cumilativeData = new ArrayList<>();
+            ArrayList<SleepState> interrupts = new ArrayList<>();
+
+            for (int i = 0; i < finaldata.size(); i++) {
+                if (i == 0) {
+                    cumilativeData.add(finaldata.get(i));
+                } else {
+                    int lastPos = cumilativeData.size() - 1;
+                    if (finaldata.get(i).isSleeping() == cumilativeData.get(lastPos).isSleeping()) {
+                        cumilativeData.get(lastPos).setEndTime(finaldata.get(i).getEndTime());
+                        cumilativeData.get(lastPos).addAccelerometerData(finaldata.get(i).getAccelerometerReadings());
+                        cumilativeData.get(lastPos).addLightData(finaldata.get(i).getLightReadings());
+                        cumilativeData.get(lastPos).addScreenData(finaldata.get(i).getScreenStates());
+                    } else {
+                        if (finaldata.get(i).getDuration() > 4) {
+                            cumilativeData.add(finaldata.get(i));
+                        } else {
+                            interrupts.add(finaldata.get(i));
+                        }
+                    }
+                }
+            }
+
+            Adapter adapter = new Adapter(cumilativeData);
+            Gson gson1 = new Gson();
+            Log.d("interrupts", "" + gson1.toJson(interrupts).toString());
             listView.setAdapter(adapter);
 
         }

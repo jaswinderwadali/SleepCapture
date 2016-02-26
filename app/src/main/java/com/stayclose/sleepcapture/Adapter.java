@@ -8,9 +8,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -50,6 +55,7 @@ public class Adapter extends BaseAdapter {
         TextView five = (TextView) view.findViewById(R.id.five);
         LineChart accelChart = (LineChart) view.findViewById(R.id.accel_graph);
         LineChart lightChart = (LineChart) view.findViewById(R.id.light_graph);
+        BarChart screenChart = (BarChart) view.findViewById(R.id.screen_graph);
 
         SleepState current = sleepDatas.get(position);
         if (!current.isSleeping()) {
@@ -114,7 +120,6 @@ public class Adapter extends BaseAdapter {
         lightChart.invalidate();
         ArrayList<Entry> light = new ArrayList<>();
         ArrayList<Float> lightreadings = current.getLightReadings();
-        Log.d("Accelerometer count:", "Pos: " + position + " count: " + readings.size());
         List<String> x1 = new ArrayList<>();
         for (int i = 0; i < lightreadings.size(); i++) {
             light.add(new Entry(lightreadings.get(i), i));
@@ -155,6 +160,74 @@ public class Adapter extends BaseAdapter {
         yVals1.setColor(Color.parseColor("#00bed6"));
 
         lightChart.setData(new LineData(x1, yVals1));
+
+        //screen chart
+        screenChart.invalidate();
+        ArrayList<BarEntry> screen = new ArrayList<>();
+        ArrayList<Boolean> screenStates = current.getScreenStates();
+        ArrayList<Integer> stateColors = new ArrayList<>();
+        List<String> x2 = new ArrayList<>();
+        for (int i = 0; i < screenStates.size(); i++) {
+            if (screenStates.get(i) == true) {
+                screen.add(new BarEntry(2f, i));
+                stateColors.add(i, Color.parseColor("#27AA0B"));
+            } else {
+                screen.add(new BarEntry(2f, i));
+                stateColors.add(i, Color.parseColor("#F32F00"));
+            }
+            x2.add("");
+        }
+
+        //chart properties
+        screenChart.setDrawGridBackground(false);
+        screenChart.animateX(1500);
+        screenChart.setPinchZoom(false);
+        screenChart.setTouchEnabled(false);
+        screenChart.setAutoScaleMinMaxEnabled(false);
+        screenChart.setScaleYEnabled(false);
+        screenChart.setDescription("");
+
+        //setting up axes
+        XAxis xAxis2 = screenChart.getXAxis();
+        xAxis2.setDrawGridLines(false);
+        xAxis2.setDrawAxisLine(false);
+        xAxis2.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        YAxis leftAxis2 = screenChart.getAxisLeft();
+        leftAxis2.setDrawAxisLine(false);
+        leftAxis2.setDrawGridLines(false);
+        leftAxis2.setDrawLabels(false);
+        leftAxis2.setStartAtZero(true);
+
+        YAxis rightAxis2 = screenChart.getAxisRight();
+        rightAxis2.setDrawAxisLine(false);
+        rightAxis2.setDrawLabels(false);
+        rightAxis2.setDrawGridLines(false);
+        rightAxis2.setStartAtZero(true);
+
+        BarDataSet yVals2 = new BarDataSet(screen, "ScreenState");
+        yVals2.setDrawValues(false);
+        yVals2.setBarSpacePercent(0);
+        yVals2.setColors(stateColors);
+
+        List<Integer> colorint = new ArrayList<>();
+        colorint.add(0, Color.parseColor("#27AA0B"));
+        colorint.add(1, Color.parseColor("#F32F00"));
+
+        List<String> colorval = new ArrayList<>();
+        colorval.add(0, "Screen on");
+        colorval.add(1, "Screen off");
+
+        Legend leg2 = screenChart.getLegend();
+        leg2.setXEntrySpace(15);
+        leg2.setCustom(colorint, colorval);
+        leg2.setTextSize(11);
+        leg2.setFormSize(9);
+        leg2.setYOffset(2f);
+        leg2.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+
+        screenChart.setData(new BarData(x2, yVals2));
+
 
         return view;
 

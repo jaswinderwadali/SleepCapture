@@ -79,6 +79,18 @@ public class SleepState {
         return screenStates;
     }
 
+    public void addAccelerometerData(ArrayList<Float> newData) {
+        this.accelerometerReadings.addAll(newData);
+    }
+
+    public void addLightData(ArrayList<Float> newData) {
+        this.lightReadings.addAll(newData);
+    }
+
+    public void addScreenData(ArrayList<Boolean> newData) {
+        this.screenStates.addAll(newData);
+    }
+
     long startTime, endTime;
     boolean isSleeping;
     ArrayList<Float> lightReadings, accelerometerReadings;
