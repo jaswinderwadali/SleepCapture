@@ -122,10 +122,6 @@ public class AccelService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-
-        Log.d("Event", "Fire");
-
-
         synchronized (this) {
             //monitor only for accelerometer changes
             int type = sensorEvent.sensor.getType();
@@ -134,7 +130,7 @@ public class AccelService extends Service implements SensorEventListener {
                 //get times of when sensor is being changed
                 Calendar cal = Calendar.getInstance();
                 long now = cal.getTimeInMillis();
-                Log.d("NOW", "" + now);
+//                Log.d("NOW", "" + now);
 
                 //monitor raw data for first 2 seconds, can be skipped as soon as a movement is detected
                 if ((!(now - startservice >= 2 * 1000) || relgrav == 0.0f) && !moving) {
@@ -146,8 +142,8 @@ public class AccelService extends Service implements SensorEventListener {
                     //check the current accelerometer val relative to earths gravity
                     relgrav = (x * x + y * y + z * z) / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
                     //user is moving if rg more than 1.1 or less than 0.9
-                    Log.d("Relgraph", "" + relgrav);
-                    if (relgrav >= 1.1 || relgrav <= 0.9) {
+//                    Log.d("Relgraph", "" + relgrav);
+                    if (relgrav >= 1.1 || relgrav <= 0.8) {
                         //movement is happening
 //                        Log.d("Moving", "Some movement is present" + relgrav);
                         moving = true;
@@ -162,7 +158,6 @@ public class AccelService extends Service implements SensorEventListener {
             }
             if (type == android.hardware.Sensor.TYPE_LIGHT) {
                 sleepData.setLight(sensorEvent.values[0]);
-                Log.d("Light_event", "Fire");
             }
         }
     }

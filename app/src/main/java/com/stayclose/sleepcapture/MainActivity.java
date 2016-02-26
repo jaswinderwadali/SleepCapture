@@ -45,107 +45,122 @@ public class MainActivity extends AppCompatActivity {
             Type listType = new TypeToken<ArrayList<SleepData>>() {
             }.getType();
 
-            List<SleepData> sleepDatas = gson.fromJson(data, listType);
-            List<SleepState> finaldata = new ArrayList<>();
+            //obtained stored datapoints
+            ArrayList<SleepData> sleepDatas = gson.fromJson(data, listType);
 
-            boolean sleepingCheck = true;
-            boolean NotsleepingCheck = true;
+            //group data points
+            ArrayList<SleepState> finaldata = groupData(sleepDatas);
 
-            Boolean sleeping = null;
-            long start = 0;
+            //group datasets removing interrupts
+            ArrayList<SleepState> cumilativeData;
 
-            ArrayList<Float> accelerometerReadings = new ArrayList<>();
-            ArrayList<Float> lightReadings = new ArrayList<>();
-            ArrayList<Boolean> screenStates = new ArrayList<>();
+            Log.d("Size after", "preliminary grouping " + finaldata.size());
+            cumilativeData = cleanData(finaldata, 4f, 1);
+            Log.d("Size after", "one cleanup " + cumilativeData.size());
 
-            for (SleepData currData : sleepDatas) {
+            cumilativeData = cleanData(cumilativeData, 7f, 2);
+            Log.d("Size after", "second cleanup " + cumilativeData.size());
 
-                if (sleeping == null) {
-                    sleeping = currData.getCase();
-                }
-                if (sleeping == currData.getCase()) {
-                    if (start == 0) {
-                        start = currData.getTime();
-                    }
-                    accelerometerReadings.add(currData.getAccelerator());
-                    lightReadings.add(currData.getLight());
-                    screenStates.add(currData.getScreenState());
-                } else {
-
-                    SleepState temp = new SleepState();
-                    temp.setEndTime(currData.getTime());
-                    temp.setIsSleeping(sleeping);
-                    temp.setStartTime(start);
-                    temp.setLightReadings(lightReadings);
-                    temp.setAccelerometerReadings(accelerometerReadings);
-                    temp.setScreenStates(screenStates);
-                    finaldata.add(temp);
-
-                    start = currData.getTime();
-                    sleeping = currData.getCase();
-
-                    //start new ArrayLists
-                    accelerometerReadings = new ArrayList<>();
-                    lightReadings = new ArrayList<>();
-                    screenStates = new ArrayList<>();
-
-                    //Add first value to new ArrayLists
-                    accelerometerReadings.add(currData.getAccelerator());
-                    lightReadings.add(currData.getLight());
-                    screenStates.add(currData.getScreenState());
-
-                }
-            }
-            int size = sleepDatas.size();
-            if (size > 0) {
-                SleepState temp = new SleepState();
-
-                temp.setIsSleeping(sleeping);
-                temp.setStartTime(start);
-                temp.setEndTime(sleepDatas.get(size > 0 ? (size - 1) : size).getTime());
-                temp.setScreenStates(screenStates);
-                temp.setAccelerometerReadings(accelerometerReadings);
-                temp.setLightReadings(lightReadings);
-                finaldata.add(temp);
-
-            }
-
-
-//            Iterator<SleepState> it = finaldata.iterator();
-//            while (it.hasNext()) {
-//                if (it.next().getDuration() <= 4f) {
-//                    it.remove();
-//                }
-//            }
-            ArrayList<SleepState> cumilativeData = new ArrayList<>();
-            ArrayList<SleepState> interrupts = new ArrayList<>();
-
-            for (int i = 0; i < finaldata.size(); i++) {
-                if (i == 0) {
-                    cumilativeData.add(finaldata.get(i));
-                } else {
-                    int lastPos = cumilativeData.size() - 1;
-                    if (finaldata.get(i).isSleeping() == cumilativeData.get(lastPos).isSleeping()) {
-                        cumilativeData.get(lastPos).setEndTime(finaldata.get(i).getEndTime());
-                        cumilativeData.get(lastPos).addAccelerometerData(finaldata.get(i).getAccelerometerReadings());
-                        cumilativeData.get(lastPos).addLightData(finaldata.get(i).getLightReadings());
-                        cumilativeData.get(lastPos).addScreenData(finaldata.get(i).getScreenStates());
-                    } else {
-                        if (finaldata.get(i).getDuration() > 5) {
-                            cumilativeData.add(finaldata.get(i));
-                        } else {
-                            interrupts.add(finaldata.get(i));
-                        }
-                    }
-                }
-            }
+            cumilativeData = cleanData(cumilativeData, 10f, 3);
+            Log.d("Size after", "third cleanup " + cumilativeData.size());
 
             Adapter adapter = new Adapter(cumilativeData);
-            Gson gson1 = new Gson();
-            Log.d("interrupts", "" + gson1.toJson(interrupts).toString());
             listView.setAdapter(adapter);
         }
 
+    }
+
+    private ArrayList<SleepState> groupData(ArrayList<SleepData> sleepDatas) {
+        Log.d("Size of raw points", "" + sleepDatas.size());
+
+        ArrayList<SleepState> finalData = new ArrayList<>();
+        Boolean sleeping = null;
+        long start = 0;
+
+        ArrayList<Float> accelerometerReadings = new ArrayList<>();
+        ArrayList<Float> lightReadings = new ArrayList<>();
+        ArrayList<Boolean> screenStates = new ArrayList<>();
+
+        for (SleepData currData : sleepDatas) {
+
+            if (sleeping == null) {
+                sleeping = currData.getCase();
+            }
+            if (sleeping == currData.getCase()) {
+                if (start == 0) {
+                    start = currData.getTime();
+                }
+                accelerometerReadings.add(currData.getAccelerator());
+                lightReadings.add(currData.getLight());
+                screenStates.add(currData.getScreenState());
+            } else {
+
+                SleepState temp = new SleepState();
+                temp.setEndTime(currData.getTime());
+                temp.setIsSleeping(sleeping);
+                temp.setStartTime(start);
+                temp.setLightReadings(lightReadings);
+                temp.setAccelerometerReadings(accelerometerReadings);
+                temp.setScreenStates(screenStates);
+                finalData.add(temp);
+
+                start = currData.getTime();
+                sleeping = currData.getCase();
+
+                //start new ArrayLists
+                accelerometerReadings = new ArrayList<>();
+                lightReadings = new ArrayList<>();
+                screenStates = new ArrayList<>();
+
+                //Add first value to new ArrayLists
+                accelerometerReadings.add(currData.getAccelerator());
+                lightReadings.add(currData.getLight());
+                screenStates.add(currData.getScreenState());
+
+            }
+        }
+        int size = sleepDatas.size();
+        if (size > 0) {
+            SleepState temp = new SleepState();
+
+            temp.setIsSleeping(sleeping);
+            temp.setStartTime(start);
+            temp.setEndTime(sleepDatas.get(size > 0 ? (size - 1) : size).getTime());
+            temp.setScreenStates(screenStates);
+            temp.setAccelerometerReadings(accelerometerReadings);
+            temp.setLightReadings(lightReadings);
+            finalData.add(temp);
+        }
+        return finalData;
+    }
+
+    public ArrayList<SleepState> cleanData(ArrayList<SleepState> originalData, float trimInterval, int iteration) {
+        Log.d("Size received", "for cleanup " + originalData.size());
+        ArrayList<SleepState> processedData = new ArrayList<>();
+        ArrayList<SleepState> interrupts = new ArrayList<>();
+        for (int i = 0; i < originalData.size(); i++) {
+            if (i == 0) {
+                processedData.add(originalData.get(i));
+            } else {
+                int lastPos = processedData.size() - 1;
+                if (originalData.get(i).isSleeping() == processedData.get(lastPos).isSleeping()) {
+                    processedData.get(lastPos).setEndTime(originalData.get(i).getEndTime());
+                    processedData.get(lastPos).addAccelerometerData(originalData.get(i).getAccelerometerReadings());
+                    processedData.get(lastPos).addLightData(originalData.get(i).getLightReadings());
+                    processedData.get(lastPos).addScreenData(originalData.get(i).getScreenStates());
+                } else {
+                    if (originalData.get(i).getDuration() > trimInterval) {
+                        processedData.add(originalData.get(i));
+                    } else {
+                        interrupts.add(originalData.get(i));
+                    }
+                }
+            }
+        }
+        Gson gson1 = new Gson();
+        Log.d("Cleanup round", iteration + " interrupts found = " + interrupts.size() +
+                ", interrupts = " + gson1.toJson(interrupts).toString());
+        return processedData;
     }
 
     public void startMonitoringAccelerometer() {
