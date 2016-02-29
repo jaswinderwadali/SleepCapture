@@ -50,19 +50,15 @@ public class MainActivity extends AppCompatActivity {
 
             //group data points
             ArrayList<SleepState> finaldata = groupData(sleepDatas);
+            Log.d("Size after", "preliminary grouping " + finaldata.size());
 
             //group datasets removing interrupts
-            ArrayList<SleepState> cumilativeData;
+            ArrayList<SleepState> cumilativeData = finaldata;
 
-            Log.d("Size after", "preliminary grouping " + finaldata.size());
-            cumilativeData = cleanData(finaldata, 4f, 1);
-            Log.d("Size after", "one cleanup " + cumilativeData.size());
-
-            cumilativeData = cleanData(cumilativeData, 7f, 2);
-            Log.d("Size after", "second cleanup " + cumilativeData.size());
-
-            cumilativeData = cleanData(cumilativeData, 10f, 3);
-            Log.d("Size after", "third cleanup " + cumilativeData.size());
+            for (int i = 0; i < 5; i++) {
+                cumilativeData = cleanData(cumilativeData, 2 + 2 * i, i + 1);
+                Log.d("Size after", i + 1 + " cleanups = " + cumilativeData.size());
+            }
 
             Adapter adapter = new Adapter(cumilativeData);
             listView.setAdapter(adapter);
@@ -158,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         Gson gson1 = new Gson();
-        Log.d("Cleanup round", iteration + " interrupts found = " + interrupts.size() +
-                ", interrupts = " + gson1.toJson(interrupts).toString());
+        Log.d("Cleanup round", iteration + " interrupts found = " + interrupts.size() /*+
+                ", interrupts = " + gson1.toJson(interrupts).toString()*/);
         return processedData;
     }
 
