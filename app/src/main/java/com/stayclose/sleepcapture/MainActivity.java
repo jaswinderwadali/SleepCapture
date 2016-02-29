@@ -55,15 +55,27 @@ public class MainActivity extends AppCompatActivity {
             //group datasets removing interrupts
             ArrayList<SleepState> cumilativeData = finaldata;
 
-            for (int i = 0; i < 5; i++) {
-                cumilativeData = cleanData(cumilativeData, 2 + 2 * i, i + 1);
-                Log.d("Size after", i + 1 + " cleanups = " + cumilativeData.size());
+            for (int i = 1; i <= 7; i++) {
+                cumilativeData = cleanData(cumilativeData, 2 * i, i);
+                Log.d("Size after", i + " cleanups = " + cumilativeData.size());
             }
 
+//            cumilativeData = removeNonSleep(cumilativeData, 5 * 60);
             Adapter adapter = new Adapter(cumilativeData);
             listView.setAdapter(adapter);
         }
 
+    }
+
+    private ArrayList<SleepState> removeNonSleep(ArrayList<SleepState> cumilativeData, int minSleep) {
+        Iterator<SleepState> iterator = cumilativeData.iterator();
+        while (iterator.hasNext()) {
+            SleepState tempp = iterator.next();
+            if (!tempp.isSleeping() || tempp.getDuration() <= minSleep) {
+                iterator.remove();
+            }
+        }
+        return cumilativeData;
     }
 
     private ArrayList<SleepState> groupData(ArrayList<SleepData> sleepDatas) {
